@@ -7,6 +7,7 @@ from tkinter import filedialog
 # Construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-o", "--output", required=False, default='output.mp4', help="output video file")
+ap.add_argument("-a", "--all", required=False, default=1, help="all frames if true")
 args = vars(ap.parse_args())
 
 root = tk.Tk()
@@ -37,6 +38,12 @@ videolength = min(len(frames1),len(frames2))
 
 output = args['output']
 
+print(args['all'])
+print(type(args['all']))
+al = True
+if (args['all'] == "0" or args['all'] == "False" or args['all'] == "false"):
+    al = False
+
 # Determine the width and height from the first image
 cv2.imshow('video',frames1[0])
 height, width, channels = frames1[0].shape
@@ -45,9 +52,14 @@ height, width, channels = frames1[0].shape
 fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Be sure to use lower case
 out = cv2.VideoWriter(output, fourcc, 20.0, (width, height))
 
+print(al)
+print(type(al))
+
 for i in range(videolength):
-    out.write(frames1[i])
-    out.write(frames2[i])
+    if (i % 2 == 0 or al):
+        out.write(frames1[i])
+    if (i % 2 == 1 or al):
+        out.write(frames2[i])
 
 # Release everything if job is finished
 out.release()
